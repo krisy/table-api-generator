@@ -4,12 +4,14 @@
   "description": "",
   "main": "table-api-cli.js",
   "scripts": {
-    "generate": "node table-api-cli.js"
+    "generate": "node table-api-cli.js",
+    "serve": "node table-api-server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "command-line-args": "^5.0.2",
+    "express": "^4.16.3",
     "fs": "0.0.1-security",
     "lodash": "^4.17.10",
     "servicenow": "^0.5.0"
