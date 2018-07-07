@@ -1,0 +1,18 @@
+{
+  "tableName": "u_bcg_vct_mapping",
+  "className": "Mapping",
+  "fields": [
+    {
+      "field": "u_catalog_item",
+      "type": "default"
+    },
+    {
+      "field": "u_region",
+      "type": "default"
+    },
+    {
+      "field": "u_portal",
+      "type": "default"
+    }
+  ]
+}

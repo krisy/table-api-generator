@@ -1,0 +1,17 @@
+{
+  "name": "vct-table-api-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "table-api-generator.js",
+  "scripts": {
+    "generate": "node table-api-generator.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "command-line-args": "^5.0.2",
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.10",
+    "servicenow": "^0.5.0"
+  }
+}
