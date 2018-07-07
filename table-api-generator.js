@@ -25,7 +25,7 @@
 		});
 
 		return res;
-	}
+	};
 
 //UTILITY FUNCTIONS
 	function compileTemplate(templateSrc, data) {
@@ -34,7 +34,7 @@
 		var compiled = templateFn(data);
 
 		return compiled;
-	}
+	};
 
 	function findTemplate(fieldType) {
 		//TODO: support additional field types; e.g. date, number, string, etc.
