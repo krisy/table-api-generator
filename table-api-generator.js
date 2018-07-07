@@ -11,7 +11,7 @@
 			var fieldDescriptor = tableDescriptor['fields'][i];
 			var templateData = {
 				fieldName: fieldDescriptor['field'],
-				nameInFunction: _.upperFirst(_.camelCase(fieldDescriptor['field'].replace('u_', '')))
+				nameInFunction: _.upperFirst(_.camelCase(fieldDescriptor['field'].replace(/^u_/, '')))
 			};
 			generatedCode += compileTemplate(findTemplate(fieldDescriptor['type']), templateData);
 			generatedCode += '\n';
