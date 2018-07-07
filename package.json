@@ -2,9 +2,9 @@
   "name": "vct-table-api-generator",
   "version": "1.0.0",
   "description": "",
-  "main": "table-api-generator.js",
+  "main": "table-api-cli.js",
   "scripts": {
-    "generate": "node table-api-generator.js"
+    "generate": "node table-api-cli.js"
   },
   "author": "",
   "license": "ISC",
