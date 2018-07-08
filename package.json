@@ -2,10 +2,11 @@
   "name": "vct-table-api-generator",
   "version": "1.0.0",
   "description": "",
-  "main": "table-api-cli.js",
+  "main": "table-api-server.js",
   "scripts": {
     "generate": "node table-api-cli.js",
-    "serve": "node table-api-server.js"
+    "serve": "node table-api-server.js",
+    "start": "node table-api-server.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +15,7 @@
     "express": "^4.16.3",
     "fs": "0.0.1-security",
     "lodash": "^4.17.10",
+    "micro": "^9.3.2",
     "servicenow": "^0.5.0"
   }
 }
