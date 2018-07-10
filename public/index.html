@@ -27,12 +27,16 @@
         <title>table-api-generator</title>
     </head>
     <body>
-        <h1>table-api-generator</h1>
+        <div class="p-3"</div>
         <form>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6">
-                        <textarea rows="15" class="form-control" id="table-descriptor" name="table-descriptor">
+                        <div class="containter">
+                            <div class="card">
+                                <h5 class="card-header">Table descriptor</h5>
+                                <div class="card-body">
+                                    <textarea rows="15" class="form-control" id="table-descriptor" name="table-descriptor">
 {
   "tableName": "u_bcg_vct_mapping",
   "className": "Mapping",
@@ -51,10 +55,20 @@
     }
   ]
 }
-                        </textarea>
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-6">
-                        <textarea rows="15" class="form-control" id="generated-code" name="generated-code"></textarea>
+                        <div class="containter">
+                            <div class="card">
+                                <h5 class="card-header">Generated code</h5>
+                                <div class="card-body">
+                                    <textarea rows="15" class="form-control" id="generated-code" name="generated-code"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
