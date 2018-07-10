@@ -24,6 +24,7 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/merge/merge.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/theme/monokai.min.css" rel="stylesheet">
 
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
         <title>table-api-generator</title>
     </head>
     <body>
@@ -63,9 +64,126 @@
                     <div class="col-sm-6">
                         <div class="containter">
                             <div class="card">
-                                <h5 class="card-header">Generated code</h5>
+                                <h5 class="card-header">
+                                    Generated code
+                                        <i class="fa fa-info-circle" id="fieldValidatorInfo"></i>
+                                </h5>
                                 <div class="card-body">
                                     <textarea rows="15" class="form-control" id="generated-code" name="generated-code"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="fieldValidatorModal" tabindex="-1" role="dialog" aria-labelledby="fieldValidatorModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="fieldValidatorModalLabel">QueryFieldValidator</h5>
+                                    <button id="fieldValidatorQuery" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea rows="15" class="form-control" id="field-validator" name="field-validator">
+var QueryFieldValidator = Class.create();
+
+QueryFieldValidator.prototype = {
+    initialize: function(table, initReferencingTables) {
+        this._fieldsInTable = this._queryFieldsInTable(table, initReferencingTables);
+    },
+
+	_queryFieldsInTable: function(table, initReferencingTables) {
+		var pseudoFields =  ['sys_meta', 'sys_tags', 'variable_pool'];
+
+		var gr = new GlideRecord(table);
+		gr.initialize();
+
+		var res = Object.keys(gr).filter(function(el) {return  pseudoFields.indexOf(el) == -1;});
+
+		if(initReferencingTables) {
+			for (var i=0; i<res.length; i++) {
+				var referenceTable = gr[res[i]].getReferenceTable();
+				if (!gs.nil(referenceTable)) {
+					var fieldsInRefTable = this._queryFieldsInTable(referenceTable);
+					for (var refFieldIdx =0; refFieldIdx < fieldsInRefTable.length; refFieldIdx++) {
+						res.push(referenceTable + "." + fieldsInRefTable[refFieldIdx]);
+					}
+				}
+			}
+		}
+
+		return res;
+	},
+
+	fieldsAreValid: function(encodedQuery) {
+	    var fieldsInQuery = this.fieldsInQuery(encodedQuery);
+
+	    for (var i=0; i<fieldsInQuery.length; i++) {
+	        var field = fieldsInQuery[i];
+	        if (this._fieldsInTable.indexOf(field) == -1) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	},
+
+	fieldsInQuery: function(query) {
+		var SEPARATOR = '###';
+		var CONDTION_SPLITTERS = ['^AND', '^OR', '^NO', '^ORDERBY', '^GROUPBY', '^'];
+		//list creates from: https://docs.servicenow.com/bundle/jakarta-platform-user-interface/page/use/common-ui-elements/reference/r_OpAvailableFiltersQueries.html
+		var CONDITIONS = ['=','>','<','>=','<=',
+			'ISNULL','ISNOTNULL',
+			'STARTSWITH','%','ENDSWITH','*','LIKE','!','NOTLIKE',
+			'ISEMPTY','ISNOTEMPTY','ANYTHING','EMPTYSTRING',
+			'BETWEEN',
+			'SAMEAS','NSAMEAS',
+			'DYNAMIC',
+			'NOT IN','IN',
+			'NOTONToday','ONToday','DATEPART',
+			'RELATIVEGE','RELATIVELE','RELATIVEGT','RELATIVELT','RELATIVEEE',
+			'MORETHAN','LESSTHAN','GT_FIELD','LT_FIELD','GT_OR_EQUALS_FIELD','LT_OR_EQUALS_FIELD',
+			'VALCHANGES','CHANGESFROM','CHANGESTO'
+		];
+
+		var parsed = query;
+		var queryConditions;
+		var fields = [];
+
+		//splitting by conditions, e.g. AND
+		for (var i=0; i<CONDTION_SPLITTERS.length; i++) {
+			parsed = parsed.replace(CONDTION_SPLITTERS[i], SEPARATOR);
+		}
+
+		queryConditions = parsed.split(SEPARATOR);
+
+		//splitting by qualifiers, e.g. '='
+		for (var queryIdx =0; queryIdx < queryConditions.length; queryIdx++) {
+			var parsedField = queryConditions[queryIdx];
+			for (var condIdx=0; condIdx<CONDITIONS.length; condIdx++) {
+				parsedField = parsedField.replace(CONDITIONS[condIdx], SEPARATOR);
+			}
+
+			var fieldAndCondition = parsedField.split(SEPARATOR);
+
+			if (fieldAndCondition.length >0) {
+				var field = fieldAndCondition[0];
+
+				if (fields.indexOf(field) == -1) {
+					fields.push(field);
+				}
+			} else {
+				this._logError('Unreachable statement for parsedField:' + parsedField, '_fieldsInEncodedQuery');
+			}
+		}
+
+		return fields;
+	},
+
+}
+                                    </textarea>
                                 </div>
                             </div>
                         </div>
@@ -88,8 +206,21 @@
 					mode: 'javascript'
 				});
 
+				var fieldValidatorEditor;
+				$('#fieldValidatorModal').on('shown.bs.modal', function (e) {
+					if (!!!fieldValidatorEditor) {
+						fieldValidatorEditor = CodeMirror.fromTextArea(document.getElementById('field-validator'), {
+							lineNumbers: true,
+							mode: 'javascript'
+						});
+					}
+				});
 
-				$("#generate-button").click(function() {
+				$("#fieldValidatorInfo").click(function() {
+					$('#fieldValidatorModal').modal('show');
+				});
+
+                $("#generate-button").click(function() {
 					var data = tableDescriptorEditor.getDoc().getValue();
 					$.ajax({
                         type: "POST",
